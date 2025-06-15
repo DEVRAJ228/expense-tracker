@@ -1,0 +1,16 @@
+# Python and environment
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Database and generated files
+*.sqlite
+*.db
+*.png
+
+# Editor and system files
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini

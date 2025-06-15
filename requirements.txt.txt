@@ -1,0 +1,5 @@
+pandas
+matplotlib
+flask
+scikit-learn
+python-dotenv
