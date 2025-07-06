@@ -1,6 +1,5 @@
 # expense-tracker
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+
 
 A Python-based expense tracking system with CLI and web interfaces, visualization, and automated reporting.
 
