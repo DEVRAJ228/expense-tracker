@@ -7,13 +7,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-# Load environment variables
+
 load_dotenv()
 DATA_FILE, BUDGET_FILE, DB_FILE = "expenses.csv", "budgets.json", "expenses.db"
 SMTP_SERVER, SMTP_PORT = os.getenv("SMTP_SERVER", "smtp.gmail.com"), int(os.getenv("SMTP_PORT", 587))
 EMAIL_USER, EMAIL_PASS = os.getenv("EMAIL_USER"), os.getenv("EMAIL_PASS")
 
-# Init files & DB
+
 def init_setup():
     if not os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'w', newline='') as f: csv.writer(f).writerow(["Date", "Category", "Amount", "Description"])
@@ -28,7 +28,7 @@ def db_query(query, params=(), fetch=False):
         cur = conn.execute(query, params)
         return pd.DataFrame(cur.fetchall(), columns=[d[0] for d in cur.description]) if fetch else None
 
-# Add & fetch expenses
+
 def add_expense(date, category, amount, desc):
     db_query("INSERT INTO expenses (date, category, amount, description) VALUES (?, ?, ?, ?)",
              (date, category, amount, desc))
@@ -37,7 +37,7 @@ def add_expense(date, category, amount, desc):
 def get_expenses():
     return db_query("SELECT * FROM expenses", fetch=True)
 
-# Budget check
+
 def check_budget(category, amount):
     budgets = json.load(open(BUDGET_FILE))
     if category not in budgets: return
@@ -49,7 +49,7 @@ def check_budget(category, amount):
     if monthly_spent + amount > budgets[category]:
         print(f"⚠️ Over budget for {category}! Spent: ${monthly_spent}, New: ${amount}")
 
-# Summary & charts
+
 def view_summary():
     df = get_expenses()
     if df.empty: return print("No expenses.")
@@ -72,7 +72,6 @@ def generate_chart(month):
     plt.savefig(path); plt.show()
     return path
 
-# Email
 def send_email_report(month, receiver, img_path=None):
     df = get_expenses()
     if df.empty: return
@@ -90,7 +89,7 @@ def send_email_report(month, receiver, img_path=None):
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
         server.starttls(); server.login(EMAIL_USER, EMAIL_PASS); server.send_message(msg)
 
-# Prediction
+
 def predict_expenses():
     df = get_expenses()
     if len(df) < 3: return print("Not enough data.")
@@ -102,7 +101,6 @@ def predict_expenses():
     pred = model.predict([[monthly['i'].max() + 1]])[0]
     print(f"Next month: ${pred:.2f}")
 
-# Flask
 app = Flask(__name__)
 @app.route('/') 
 def index(): 
@@ -113,7 +111,7 @@ def add_web():
     add_expense(request.form['date'], request.form['category'], float(request.form['amount']), request.form['description'])
     return redirect(url_for('index'))
 
-# CLI
+
 def main():
     init_setup()
     while True:
