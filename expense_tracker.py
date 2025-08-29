@@ -8,24 +8,24 @@ import streamlit as st
 
 DATA_FILE = "expenses.csv"
 
-# --- Setup CSV file if not exists ---
+#Setup CSV file if not exists
 def init_setup():
     if not os.path.exists(DATA_FILE):
         df = pd.DataFrame(columns=["Date", "Category", "Amount", "Description"])
         df.to_csv(DATA_FILE, index=False)
 
-# --- Load data ---
+# Load data
 def get_expenses():
     return pd.read_csv(DATA_FILE)
 
-# --- Add expense ---
+#Add expense
 def add_expense(date, category, amount, desc=""):
     df = get_expenses()
     new_row = {"Date": date, "Category": category, "Amount": amount, "Description": desc}
     df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
     df.to_csv(DATA_FILE, index=False)
 
-# --- View summary ---
+# View summary
 def summary_text():
     df = get_expenses()
     if df.empty:
@@ -35,7 +35,7 @@ def summary_text():
     by_cat = df.groupby('Category')['Amount'].sum()
     return f"Monthly:\n{monthly}\n\nBy Category:\n{by_cat}"
 
-# --- Prediction ---
+# Prediction
 def predict_expenses():
     df = get_expenses()
     if len(df) < 3:
@@ -60,7 +60,7 @@ def cli_mode():
         elif choice == '3': print(predict_expenses())
         elif choice == '4': break
 
-# --- Web Mode (Streamlit) ---
+# Web Mode (Streamlit)
 def web_mode():
     st.title("Expense Tracker")
 
@@ -90,7 +90,7 @@ def web_mode():
     elif menu == "Predict Expenses":
         st.info(predict_expenses())
 
-# --- Entry Point ---
+# Entry Point
 if __name__ == "__main__":
     init_setup()
     mode = input("Run in (c)ommand line or (w)eb? ").strip().lower()
